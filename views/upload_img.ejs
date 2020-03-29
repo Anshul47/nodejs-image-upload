@@ -1,0 +1,149 @@
+<html>  
+    <head>  
+        <title>Image Upload</title>  
+		<link rel="icon" type="image/png" href="/images/brain-favicon-01.png" />
+		<script src="/javascripts/jquery.min.js"></script>  
+		<script src="/javascripts/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        
+        <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+        
+    </head>  
+    <body>  
+        <div class="container">
+<!-- ############################################################################################# -->
+            <br />
+            <h3 align="center">Single Image Upload</h3>
+            <br />
+            <br />
+
+            <form action="/upload-img" enctype="multipart/form-data" method="post">
+            
+                <div class="panel panel-default">
+                  <div class="panel-heading">Single image upload</div>
+                  <div class="panel-body" align="center">
+                    <input type="file" name="file-to-upload" id="file-to-upload"  />
+                    <br>
+                    <input type="submit" value="Upload">
+                    <div id="uploaded_image"></div>
+                  </div>
+                </div>
+
+            </form>
+<!-- ############################################################################################# -->
+            <br />
+            <h3 align="center">Multiple Image Upload</h3>
+            <br />
+            <br />
+
+            <form action="/upload-imges" enctype="multipart/form-data" method="post">
+            
+                <div class="panel panel-default">
+                  <div class="panel-heading">Multiple image upload</div>
+                  <div class="panel-body" align="center">
+                    <input type="file" name="file-to-upload" id="file-to-upload" multiple="true" />
+                    <br>
+                    <input type="submit" value="Upload">
+                    <div id="uploaded_image"></div>
+                  </div>
+                </div>
+
+            </form>
+<!-- ############################################################################################# -->
+            <br />
+            <h3 align="center">Single Image Upload With Ajax</h3>
+            <br />
+            <br />
+
+            <form id="single_upload" enctype="multipart/form-data">
+            
+                <div class="panel panel-default">
+                  <div class="panel-heading">Single image upload with ajax</div>
+                  <div class="panel-body" align="center">
+                    <input type="file" name="file-to-upload" id="file-to-upload"  />
+                    <br>
+                    <input type="submit" value="Upload">
+                    <div id="uploaded_image_1"></div>
+                  </div>
+                </div>
+
+            </form>
+<!-- ############################################################################################# -->
+            <br />
+            <h3 align="center">Multiple Image Upload With Ajax</h3>
+            <br />
+            <br />
+
+            <form id="multiple_upload" enctype="multipart/form-data">
+            
+                <div class="panel panel-default">
+                  <div class="panel-heading">Multiple image upload with ajax</div>
+                  <div class="panel-body" align="center">
+                    <input type="file" name="file-to-upload" id="file-to-upload" multiple="true"  />
+                    <br>
+                    <input type="submit" value="Upload">
+                    <div id="uploaded_image_2"></div>
+                  </div>
+                </div>
+
+            </form>
+            <br />
+
+<!-- ############################################################################################# -->
+
+        </div>
+        <!-- Footer -->
+<footer class="page-footer font-small blue pt-4">
+
+
+  
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3">© 2020 Copyright:
+      <a href="https://anshulapps.in" target="_blank"> anshulapps.in</a>
+    </div>
+    <!-- Copyright -->
+  
+  </footer>
+  <!-- Footer -->
+        <script>
+            $(document).ready(function(){  
+                $('#single_upload').on('submit', function(e){ 
+                    e.preventDefault(); 
+                    $.ajax({  
+                        url: "/upload-img",  
+                        type: "POST",  
+                        data: new FormData(this),  
+                        contentType: false,  
+                        processData:false,  
+                        success: function(data){  
+                            var html = '<img src="'+data.thumb_url+'">';
+                            $('#uploaded_image_1').append(html);
+                        }  
+                    }); 
+                });
+
+                $('#multiple_upload').on('submit', function(e){ 
+                    e.preventDefault(); 
+                    $.ajax({  
+                        url: "/upload-imges",  
+                        type: "POST",  
+                        data: new FormData(this),  
+                        contentType: false,  
+                        processData:false,  
+                        success: function(data){  
+                            var html = '';
+                            for(var i = 0; i < data.length; i++){
+                                html += '<img src="'+data[i].thumb_url+'">';
+                            }
+                            $('#uploaded_image_2').append(html);
+                        }  
+                    }); 
+                });
+            });    
+
+        </script>
+
+    </body>  
+</html>
+
+
