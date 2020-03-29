@@ -1,7 +1,7 @@
 # nodejs-image-upload
-Single Image Upload,
-Multiple Image Upload,
-Single Image Upload With Ajax,
+Single Image Upload<br/>
+Multiple Image Upload<br/>
+Single Image Upload With Ajax<br/>
 Multiple Image Upload With Ajax
 
 
