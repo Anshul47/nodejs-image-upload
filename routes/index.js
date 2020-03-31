@@ -36,30 +36,45 @@ router.post('/upload-imges', async (req, res, next) => {
                 err
             })
         }else{
+
             const filedate =  req.files.map(file => {
+
                 var file_path = file.path;
                 return jimp.read(file_path).then(image => {
-                    file_name_thumb = 'Thumb' + '-' + Date.now() + ".png";
+
+                    image.resize(image.bitmap.width, image.bitmap.height)
+                    .quality(20)
+                    .write('public/images/uploads/'+file.filename);
+                    file.url = 'http://'+req.headers.host+'/images/uploads/'+file.filename;
+
+                    return jimp.read(file_path).then(image1 => {
+
+                        file_name_thumb = 'Thumb' + '-' + Date.now() + ".png";
+
+                        var og_width    = image1.bitmap.width;
+                        var og_height   = image1.bitmap.height;
     
-                        var og_width = image.bitmap.width;
-                        var og_height = image.bitmap.height;
-    
-                        var ch_height = 137;
-                        var ch_width = ch_height * og_width / og_height;
-                       
-                        // var ch_width = 369;
-                        // var ch_height = ch_width * og_height / og_width;
-    
+                        var ch_height   = 137;
+                        var ch_width    = ch_height * og_width / og_height;
+
                         image.resize(ch_width, ch_height)
                         .quality(80)
                         .write('public/images/uploads/thumb/'+file_name_thumb);
-                        file.url = 'http://'+req.headers.host+'/images/uploads/'+file.filename;
-                        file.thumb_url = 'http://'+req.headers.host+'/images/uploads/thumb/'+file_name_thumb;   
+                        file.thumb_path     = 'public/images/uploads/thumb/'+file_name_thumb;
+                        file.thumb_filename = file_name_thumb;
+                        file.thumb_url      = 'http://'+req.headers.host+'/images/uploads/thumb/'+file_name_thumb;
+                        
+                    })
+                    .catch(e => {
+                        return res.send(e);
+                    });
                 })
                 .catch(e => {
                     return res.send(e);
                 });
+
             });
+
             Promise.all(filedate).then(() => {
                 res.send(req.files);
             });
@@ -98,35 +113,45 @@ router.post('/upload-img', (req, res, next) => {
             })
             
         }else{
-            
             var file_path = 'public/images/uploads/'+file_name;
             jimp.read(file_path, function(err, image){
                 if(err){
                     console.log(err)
                 }else{
-                    file_name_thumb = 'Thumb' + '-' + Date.now() + ".png";
+                    image.resize(image.bitmap.width, image.bitmap.height)
+                    .quality(20)
+                    .write('public/images/uploads/'+req.file.filename);
+                    req.file.url = 'http://'+req.headers.host+'/images/uploads/'+req.file.filename;
 
-                    var og_width = image.bitmap.width;
-                    var og_height = image.bitmap.height;
-
-                    var ch_height = 137;
-                    var ch_width = ch_height * og_width / og_height;
-
-                   
-                    // var ch_width = 369;
-                    // var ch_height = ch_width * og_height / og_width;
-
-
-                    image.resize(ch_width, ch_height)
-                    .quality(80)
-                    .write('public/images/uploads/thumb/'+file_name_thumb);
-
-                    req.file.url = 'http://'+req.headers.host+'/images/uploads/'+file.filename;
-                    req.file.thumb_url = 'http://'+req.headers.host+'/images/uploads/thumb/'+file_name_thumb;   
-
-                    res.send(req.file);
+                    jimp.read(file_path, function(err, image){
+                        if(err){
+                            console.log(err)
+                        }else{
+                            file_name_thumb = 'Thumb' + '-' + Date.now() + ".png";
+        
+                            var og_width = image.bitmap.width;
+                            var og_height = image.bitmap.height;
+        
+                            var ch_height = 137;
+                            var ch_width = ch_height * og_width / og_height;
+        
+                        
+                            // var ch_width = 369;
+                            // var ch_height = ch_width * og_height / og_width;
+        
+        
+                            image.resize(ch_width, ch_height)
+                            .quality(20)
+                            .write('public/images/uploads/thumb/'+file_name_thumb);
+                            req.file.thumb_path         = 'public/images/uploads/thumb/'+file_name_thumb;
+                            req.file.thumb_filename = file_name_thumb;
+                            req.file.thumb_url = 'http://'+req.headers.host+'/images/uploads/thumb/'+file_name_thumb;
+        
+                            res.send(req.file);
+                        }
+                    });  
                 }
-            });            
+            });       
         }
     });
 });
